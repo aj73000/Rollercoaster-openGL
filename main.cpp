@@ -77,6 +77,14 @@ void reshape(GLFWwindow * window,int width, int height)		// Resize the OpenGL wi
     //Calculate a projection matrix based on perspective viewing for 3d geometry
     ProjectionMatrix = glm::perspective(glm::radians(cam.Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
 }
+/**
+ *
+ * name: setupSpline
+ * @param filePath
+ * @param trackFilePath
+ * description: Generates the points for the spline to go over. This is all the rotation maths as well
+ * return type: void
+ */
 void setupSpline(const char* filePath,const char* trackFilePath)
 {
     std::string line;
@@ -175,7 +183,13 @@ void setupSpline(const char* filePath,const char* trackFilePath)
                        + pow(curvePositions[i].Position.y - normal.y, 2) +
                        pow(curvePositions[i].Position.z - normal.z, 2));
 
+
+        // Applying cosine rule to get the angle
         curvePositions[i].Rotation = acos((pow(b, 2) + 1 - pow(a, 2)) / (2 * b));
+
+        //Getting the rotational point with respect to the cart position
+        //If the value of z is less than 0 it is to the left so inverse the angle as cosine rule only gives the
+        //magnitude of the angle not the direction
         glm::vec4 vector = glm::vec4(curvePositions[i].Position,0) - glm::vec4(trackPoints[i].Position,0);
         vector = glm::inverse(mat) * vector;
         curvePositions[i].Rotation = vector.z < 0 ? curvePositions[i].Rotation *= -1 : curvePositions[i].Rotation;

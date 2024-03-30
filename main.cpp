@@ -1,5 +1,3 @@
-//OPENGL 4 EXAMPLE
-
 #include <iostream>
 #include <memory>
 using namespace std;
@@ -13,7 +11,6 @@ using namespace std;
 //--------------
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-//#include "GL/freeglut.h"
 #include "Model/Model.h"
 #include "Cube/Cube.h"
 #include "CubeMap/cubeMap.h"
@@ -64,8 +61,6 @@ Cube* lightCube;
 std::vector<Vertex> curvePositions;
 std::vector<Vertex> trackPoints;
 int positionPointer = 0 , positionPointer1 = 12;
-
-
 
 float rollAngle = 0;
 

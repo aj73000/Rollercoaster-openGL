@@ -1,0 +1,172 @@
+# Blender 4.0.2 MTL File: 'None'
+# www.blender.org
+
+newmtl Arm1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Arm_Arm1_BaseColor.png
+
+newmtl Arm2
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Arm_Arm2_BaseColor.png
+map_Ns Arm_Arm2_Roughness.png
+map_refl Arm_Arm2_Metallic.png
+map_bump -bm 1.000000 Arm_Arm2_NormalOpenGL.png
+
+newmtl BaseShield.001
+Ns 562.500000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl BaseShield.002
+Ns 562.500000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl BaseShield.003
+Ns 562.500000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl BaseShield.004
+Ns 562.500000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Head1
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Head1_Base_Color.png
+map_Ns Head1_Roughness.png
+map_refl Head1_Metallic.png
+map_bump -bm 1.000000 Head1_Normal_OpenGL.png
+
+newmtl Head2
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Head2_Base_Color.png
+map_bump -bm 1.000000 Head2_Normal_OpenGL.png
+
+newmtl Leg1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Leg1_Base_Color.png
+map_bump -bm 1.000000 Leg1_Normal_OpenGL.png
+
+newmtl Leg2
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Leg2_Base_Color.png
+map_Ns Leg2_Roughness.png
+map_refl Leg2_Metallic.png
+
+newmtl Leg3
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Leg3_Base_Color.png
+map_Ns Leg3_Roughness.png
+map_refl C:/Users/luigi/Downloads/000_Berseker/Textures/Leg/Textures/Leg3_Metallic.png
+
+newmtl Light
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl LightPlaceholder
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Scarf
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.046959 0.027536 0.018855
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_bump -bm 1.000000 N1.png
+
+newmtl Torso01.001
+Ns 96.078415
+Ka 1.000000 1.000000 1.000000
+Ks 0.280952 0.280952 0.280952
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Torso_Torso01_BaseColor.png
+
+newmtl Torso02.001
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Torso_Torso02_BaseColor.png
+map_Ns Torso_Torso02_Roughness.png
+map_refl Torso_Torso02_Metallic.png

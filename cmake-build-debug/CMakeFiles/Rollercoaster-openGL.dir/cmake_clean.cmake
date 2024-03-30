@@ -1,0 +1,41 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/Rollercoaster-openGL.dir/Audio/SoundDevice.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Audio/SoundDevice.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Camera/Camera.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Camera/Camera.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/CoasterCart/Cart.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/CoasterCart/Cart.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Cube/Cube.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Cube/Cube.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/CubeMap/cubeMap.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/CubeMap/cubeMap.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Mesh/Mesh.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Mesh/Mesh.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Model/Model.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Model/Model.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Physics/PhysicsCollision.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Physics/PhysicsCollision.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Plane/Plane.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Plane/Plane.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Spline/Spline.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Spline/Spline.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Texture/Texture.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Texture/Texture.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/Vector/Vertex.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/Vector/Vertex.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/main.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/main.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/shaders/DepthMap.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/shaders/DepthMap.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/shaders/Shader.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/shaders/Shader.cpp.o.d"
+  "CMakeFiles/Rollercoaster-openGL.dir/stb/stbi.cpp.o"
+  "CMakeFiles/Rollercoaster-openGL.dir/stb/stbi.cpp.o.d"
+  "Rollercoaster-openGL"
+  "Rollercoaster-openGL.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/Rollercoaster-openGL.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

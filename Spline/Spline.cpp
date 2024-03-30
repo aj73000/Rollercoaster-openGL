@@ -9,9 +9,12 @@
 void Spline::spline(const Vertex& p0, const Vertex& p1, const Vertex& p2, const Vertex& p3, float t, Cart* cart,float alpha)
 {
     static bool change;
+    static bool rollChange;
     if(t == 0)
+    {
         change = true;
-
+        rollChange = true;
+    }
     float t0 = 0.0f;
     float t1 = t0 + pow(distance(p0.Position, p1.Position), alpha);
     float t2 = t1 + pow(distance(p1.Position, p2.Position), alpha);
@@ -28,6 +31,15 @@ void Spline::spline(const Vertex& p0, const Vertex& p1, const Vertex& p2, const 
     glm::vec3 B2 = ( t3-t )/( t3-t1 )*A2 + ( t-t1 )/( t3-t1 )*A3;
 
     cart->Position  = ( t2-t )/( t2-t1 )*B1 + ( t-t1 )/( t2-t1 )*B2;
+
+    float F1 = ( t1-t )/( t1-t0 )*p0.Pitch + ( t-t0 )/( t1-t0 )*p1.Pitch;
+    float F2 = ( t2-t )/( t2-t1 )*p1.Pitch + ( t-t1 )/( t2-t1 )*p2.Pitch;
+    float F3 = ( t3-t )/( t3-t2 )*p2.Pitch + ( t-t2 )/( t3-t2 )*p3.Pitch;
+
+    float G1 = ( t2-t )/( t2-t0 )*F1 + ( t-t0 )/( t2-t0 )*F2;
+    float G2 = ( t3-t )/( t3-t1 )*F2 + ( t-t1 )/( t3-t1 )*F3;
+
+    cart->Pitch = ( t2-t )/( t2-t1 )*G1 + ( t-t1 )/( t2-t1 )*G2;
 
     if(change)
     {
@@ -48,32 +60,23 @@ void Spline::spline(const Vertex& p0, const Vertex& p1, const Vertex& p2, const 
             change = false;
         }
     }
+    if(rollChange)
+    {
+        float temp = cart->Roll;
 
-    float F1 = ( t1-t )/( t1-t0 )*p0.Pitch + ( t-t0 )/( t1-t0 )*p1.Pitch;
-    float F2 = ( t2-t )/( t2-t1 )*p1.Pitch + ( t-t1 )/( t2-t1 )*p2.Pitch;
-    float F3 = ( t3-t )/( t3-t2 )*p2.Pitch + ( t-t2 )/( t3-t2 )*p3.Pitch;
+        float H1 = ( t1-t )/( t1-t0 )*p0.Rotation + ( t-t0 )/( t1-t0 )*p1.Rotation;
+        float H2 = ( t2-t )/( t2-t1 )*p1.Rotation + ( t-t1 )/( t2-t1 )*p2.Rotation;
+        float H3 = ( t3-t )/( t3-t2 )*p2.Rotation + ( t-t2 )/( t3-t2 )*p3.Rotation;
 
-    float G1 = ( t2-t )/( t2-t0 )*F1 + ( t-t0 )/( t2-t0 )*F2;
-    float G2 = ( t3-t )/( t3-t1 )*F2 + ( t-t1 )/( t3-t1 )*F3;
+        float I1 = ( t2-t )/( t2-t0 )*H1 + ( t-t0 )/( t2-t0 )*H2;
+        float I2 = ( t3-t )/( t3-t1 )*H2 + ( t-t1 )/( t3-t1 )*H3;
 
-    cart->Pitch = ( t2-t )/( t2-t1 )*G1 + ( t-t1 )/( t2-t1 )*G2;
+        cart->Roll = ( t2-t )/( t2-t1 )*I1 + ( t-t1 )/( t2-t1 )*I2;
 
-    if((( t1-t )/( t1-t0 )))
-        cart->Roll = p0.Rotation;
-    if((( t2-t )/( t2-t1 )))
-        cart->Roll = p1.Rotation;
-    if((( t3-t )/( t3-t2 )))
-        cart->Roll = p2.Rotation;
-    if((( t-t2 )/( t3-t2 )))
-        cart->Roll = p3.Rotation;
-    /*
-    float H1 = ( t1-t )/( t1-t0 )*p0.Rotation + ( t-t0 )/( t1-t0 )*p1.Rotation;
-    float H2 = ( t2-t )/( t2-t1 )*p1.Rotation + ( t-t1 )/( t2-t1 )*p2.Rotation;
-    float H3 = ( t3-t )/( t3-t2 )*p2.Rotation + ( t-t2 )/( t3-t2 )*p3.Rotation;
-
-    float I1 = ( t2-t )/( t2-t0 )*H1 + ( t-t0 )/( t2-t0 )*H2;
-    float I2 = ( t3-t )/( t3-t1 )*H2 + ( t-t1 )/( t3-t1 )*H3;
-
-    cart->Roll = ( t2-t )/( t2-t1 )*I1 + ( t-t1 )/( t2-t1 )*I2;
-     */
+        if(abs(cart->Roll - temp) > glm::radians(45.0f))
+        {
+            cart->Roll = -temp;
+            rollChange = false;
+        }
+}
 }

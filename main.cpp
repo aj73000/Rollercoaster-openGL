@@ -77,12 +77,6 @@ void reshape(GLFWwindow * window,int width, int height)		// Resize the OpenGL wi
     //Calculate a projection matrix based on perspective viewing for 3d geometry
     ProjectionMatrix = glm::perspective(glm::radians(cam.Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
 }
-
-static inline float distance(glm::vec3 vector)
-{
-    return (float)sqrt(pow(vector.x,2)+pow(vector.y,2)+pow(vector.z,2));
-}
-
 void setupSpline(const char* filePath,const char* trackFilePath)
 {
     std::string line;
@@ -185,8 +179,6 @@ void setupSpline(const char* filePath,const char* trackFilePath)
         glm::vec4 vector = glm::vec4(curvePositions[i].Position,0) - glm::vec4(trackPoints[i].Position,0);
         vector = glm::inverse(mat) * vector;
         curvePositions[i].Rotation = vector.z < 0 ? curvePositions[i].Rotation *= -1 : curvePositions[i].Rotation;
-
-        std::cout <<  glm::degrees(curvePositions[i].Rotation) << std::endl;
     }
 }
 
@@ -199,12 +191,19 @@ void display()
     Spline::spline(curvePositions[positionPointer],curvePositions[positionPointer+1],curvePositions[positionPointer+2],curvePositions[positionPointer+3],pathTime,cart);
     Spline::spline(curvePositions[positionPointer1],curvePositions[positionPointer1+1],curvePositions[positionPointer1+2],curvePositions[positionPointer1+3],pathTime,cart1);
 
-
-    cam.Position = cart->Position;
-    cam.Position.y += 0.08f; //* cos(cart->Roll);
-    cam.Pitch = glm::degrees(cart->Pitch);
-    cam.Yaw = -90-glm::degrees(cart->Yaw);
-    cam.Roll = cart->Roll;
+/*
+    glm::vec4 camPos = glm::vec4(0,0.08f,0,0);
+    glm::mat4 mat = glm::mat4(1);
+    mat = glm::rotate(mat, -cart1->Yaw, glm::vec3(0, 1, 0));
+    mat = glm::rotate(mat, cart1->Pitch, glm::vec3(0, 0, 1));
+    mat = glm::rotate(mat,cart1->Roll,glm::vec3(1,0,0));
+    camPos = mat * camPos;
+    camPos += glm::vec4(cart1->Position,0);
+    cam.Position = camPos;
+    cam.Pitch = glm::degrees(cart1->Pitch);
+    cam.Yaw = -90-glm::degrees(cart1->Yaw);
+    cam.Roll = glm::degrees(cart1->Roll);
+*/
 
     shader->use();
 

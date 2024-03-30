@@ -1,3 +1,0 @@
-/home/arthur/Documents/Cpp/Rollercoaster-openGL/cmake-build-debug/CMakeFiles/Rollercoaster-openGL.dir
-/home/arthur/Documents/Cpp/Rollercoaster-openGL/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/arthur/Documents/Cpp/Rollercoaster-openGL/cmake-build-debug/CMakeFiles/rebuild_cache.dir

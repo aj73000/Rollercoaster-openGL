@@ -59,7 +59,7 @@ bool first = true;
 Cube* lightCube;
 
 std::vector<Vertex> curvePositions;
-std::vector<Vertex> trackPoints;
+
 int positionPointer = 0 , positionPointer1 = 12;
 
 float rollAngle = 0;
@@ -77,124 +77,6 @@ void reshape(GLFWwindow * window,int width, int height)		// Resize the OpenGL wi
     //Calculate a projection matrix based on perspective viewing for 3d geometry
     ProjectionMatrix = glm::perspective(glm::radians(cam.Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
 }
-/**
- *
- * name: setupSpline
- * @param filePath
- * @param trackFilePath
- * description: Generates the points for the spline to go over. This is all the rotation maths as well
- * return type: void
- */
-void setupSpline(const char* filePath,const char* trackFilePath)
-{
-    std::string line;
-    ifstream file(filePath);
-    while (getline (file, line))
-    {
-        float posX,posY,posZ;
-        string temp;
-        int point = 0;
-        for(char i : line)
-        {
-            if(i != ' ')
-            {
-                temp += i;
-            }
-            else
-            {
-                switch(point)
-                {
-                    case 0:
-                        posX = stof(temp);
-                        break;
-                    case 1:
-                        posZ = -stof(temp);
-                        break;
-                    case 2:
-                        posY = stof(temp);
-                        break;
-                        default:
-                            break;
-                }
-                point == 2 ? point = 0 :point += 1;
-                temp = "";
-            }
-        }
-        curvePositions.emplace_back(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(posX,posY,posZ)),0,0,0);
-    }
-    file.close();
-    file.open(trackFilePath);
-    while (getline (file, line))
-    {
-        float posX,posY,posZ;
-        string temp;
-        int point = 0;
-        for(char i : line)
-        {
-            if(i != ' ')
-            {
-                temp += i;
-            }
-            else
-            {
-                switch(point)
-                {
-                    case 0:
-                        posX = stof(temp);
-                        break;
-                    case 1:
-                        posZ = -stof(temp);
-                        break;
-                    case 2:
-                        posY = stof(temp);
-                        break;
-                    default:
-                        break;
-                }
-                point == 2 ? point = 0 :point += 1;
-                temp = "";
-            }
-        }
-        trackPoints.emplace_back(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(posX,posY,posZ)),0,0,0);
-    }
-    file.close();
-    for(int i = 1 ; i<curvePositions.size() - 1;i++)
-    {
-        float distance = sqrt(pow(curvePositions[i + 1].Position.x - curvePositions[i].Position.x, 2)
-                              + pow(curvePositions[i + 1].Position.y - curvePositions[i].Position.y, 2) +
-                              pow(curvePositions[i + 1].Position.z - curvePositions[i].Position.z, 2));
-
-        curvePositions[i].Pitch = asin((curvePositions[i + 1].Position.y - curvePositions[i].Position.y) / distance);
-        curvePositions[i].Yaw = atan2((float) (curvePositions[i + 1].Position.z - curvePositions[i].Position.z),
-                                      (float) (curvePositions[i + 1].Position.x - curvePositions[i].Position.x));
-
-        glm::vec4 normal = glm::vec4(0, 1, 0, 0);
-        glm::mat4 mat = glm::mat4(1);
-        mat = glm::rotate(mat, -curvePositions[i].Yaw, glm::vec3(0, 1, 0));
-        mat = glm::rotate(mat, curvePositions[i].Pitch, glm::vec3(0, 0, 1));
-        normal = mat * normal;
-        normal += glm::vec4(trackPoints[i].Position, 0);
-
-        float b = sqrt(pow(curvePositions[i].Position.x - trackPoints[i].Position.x, 2)
-                       + pow(curvePositions[i].Position.y - trackPoints[i].Position.y, 2) +
-                       pow(curvePositions[i].Position.z - trackPoints[i].Position.z, 2));
-
-        float a = sqrt(pow(curvePositions[i].Position.x - normal.x, 2)
-                       + pow(curvePositions[i].Position.y - normal.y, 2) +
-                       pow(curvePositions[i].Position.z - normal.z, 2));
-
-
-        // Applying cosine rule to get the angle
-        curvePositions[i].Rotation = acos((pow(b, 2) + 1 - pow(a, 2)) / (2 * b));
-
-        //Getting the rotational point with respect to the cart position
-        //If the value of z is less than 0 it is to the left so inverse the angle as cosine rule only gives the
-        //magnitude of the angle not the direction
-        glm::vec4 vector = glm::vec4(curvePositions[i].Position,0) - glm::vec4(trackPoints[i].Position,0);
-        vector = glm::inverse(mat) * vector;
-        curvePositions[i].Rotation = vector.z < 0 ? curvePositions[i].Rotation *= -1 : curvePositions[i].Rotation;
-    }
-}
 
 void display()
 {
@@ -205,7 +87,7 @@ void display()
     Spline::spline(curvePositions[positionPointer],curvePositions[positionPointer+1],curvePositions[positionPointer+2],curvePositions[positionPointer+3],pathTime,cart);
     Spline::spline(curvePositions[positionPointer1],curvePositions[positionPointer1+1],curvePositions[positionPointer1+2],curvePositions[positionPointer1+3],pathTime,cart1);
 
-/*
+
     glm::vec4 camPos = glm::vec4(0,0.08f,0,0);
     glm::mat4 mat = glm::mat4(1);
     mat = glm::rotate(mat, -cart1->Yaw, glm::vec3(0, 1, 0));
@@ -217,7 +99,7 @@ void display()
     cam.Pitch = glm::degrees(cart1->Pitch);
     cam.Yaw = -90-glm::degrees(cart1->Yaw);
     cam.Roll = glm::degrees(cart1->Roll);
-*/
+
 
     shader->use();
 
@@ -288,7 +170,7 @@ void init()
 {
     glClearColor(0.0,0.0,0.0,0.0);
 
-    setupSpline("../Spline/Points1.txt","../Spline/TrackPoints1.txt");
+    curvePositions = Spline::setupSpline("../Spline/Points1.txt","../Spline/TrackPoints1.txt");
 
     cart = new Cart("../Object/RollerCoaster/Cart.obj");
     cart1 = new Cart("../Object/RollerCoaster/Cart.obj");

@@ -5,9 +5,11 @@
 #ifndef LEARNOPENGL_PHYSICSCOLLISION_H
 #define LEARNOPENGL_PHYSICSCOLLISION_H
 
+#include "Object.h"
 
 class PhysicsCollision {
-
+public:
+    static bool detectCollision(Object a,const std::vector<Object>& objects);
 };
 
 

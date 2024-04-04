@@ -11,6 +11,7 @@
 #include "vector"
 
 #include "../Cube/Cube.h"
+#include "../Physics/Object.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -19,7 +20,7 @@
 #include <stb/stb_image.h>
 
 
-class Model
+class Model : public Object
 {
 public:
 
@@ -27,6 +28,8 @@ public:
     {
         loadModel(path);
     }
+
+
     void Draw(Shader &shader);
 
 private:
@@ -34,6 +37,8 @@ private:
     std::vector<Mesh> meshes;
     std::string directory;
     std::vector<Texture> textures_loaded;
+    float meshSize = 0;
+    aiMesh* biggestMesh;
 
     void loadModel(std::string path);
     void processNode(aiNode *node, const aiScene *scene);

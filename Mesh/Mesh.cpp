@@ -38,10 +38,6 @@ void Mesh::Draw(Shader &shader)
      glBindTexture(GL_TEXTURE_2D, 0);
 
      glBindVertexArray(0);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //box.render();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Mesh::setupMesh()

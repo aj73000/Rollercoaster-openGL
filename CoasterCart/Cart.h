@@ -10,23 +10,18 @@
 class Cart : public Model{
 public:
     Cart(const char* path) : Model(path){};
-    glm::vec3 Position;
-    glm::vec3 CamPosition;
-
+    float Pitch = 0 , Yaw = 0,Roll = 0;
     glm::mat4 getModelMatrix()
     {
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model,Position);
-
-        model = glm::rotate(model,-Yaw,glm::vec3(0,1,0));
-        model = glm::rotate(model,Pitch,glm::vec3(0,0,1));
-        model = glm::rotate(model,Roll,glm::vec3(1,0,0));
-
+        model = glm::translate(model,this->Position);
+        model = glm::rotate(model,-this->Yaw,glm::vec3(0,1,0));
+        model = glm::rotate(model,this->Pitch,glm::vec3(0,0,1));
+        model = glm::rotate(model,this->Roll,glm::vec3(1,0,0));
         model = glm::scale(model,glm::vec3(10,10,10));
-
+        setTranslation(model);
         return model;
     };
-    float Pitch, Yaw = 0,Roll;
 };
 
 

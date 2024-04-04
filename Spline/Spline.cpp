@@ -30,7 +30,7 @@ void Spline::spline(const Vertex& p0, const Vertex& p1, const Vertex& p2, const 
     glm::vec3 B1 = ( t2-t )/( t2-t0 )*A1 + ( t-t0 )/( t2-t0 )*A2;
     glm::vec3 B2 = ( t3-t )/( t3-t1 )*A2 + ( t-t1 )/( t3-t1 )*A3;
 
-    cart->Position  = ( t2-t )/( t2-t1 )*B1 + ( t-t1 )/( t2-t1 )*B2;
+    cart->setPosition(( t2-t )/( t2-t1 )*B1 + ( t-t1 )/( t2-t1 )*B2);
 
     float F1 = ( t1-t )/( t1-t0 )*p0.Pitch + ( t-t0 )/( t1-t0 )*p1.Pitch;
     float F2 = ( t2-t )/( t2-t1 )*p1.Pitch + ( t-t1 )/( t2-t1 )*p2.Pitch;
@@ -63,7 +63,6 @@ void Spline::spline(const Vertex& p0, const Vertex& p1, const Vertex& p2, const 
     if(rollChange)
     {
         float temp = cart->Roll;
-
         float H1 = ( t1-t )/( t1-t0 )*p0.Rotation + ( t-t0 )/( t1-t0 )*p1.Rotation;
         float H2 = ( t2-t )/( t2-t1 )*p1.Rotation + ( t-t1 )/( t2-t1 )*p2.Rotation;
         float H3 = ( t3-t )/( t3-t2 )*p2.Rotation + ( t-t2 )/( t3-t2 )*p3.Rotation;
@@ -72,7 +71,6 @@ void Spline::spline(const Vertex& p0, const Vertex& p1, const Vertex& p2, const 
         float I2 = ( t3-t )/( t3-t1 )*H2 + ( t-t1 )/( t3-t1 )*H3;
 
         cart->Roll = ( t2-t )/( t2-t1 )*I1 + ( t-t1 )/( t2-t1 )*I2;
-
         if(abs(cart->Roll - temp) > glm::radians(45.0f))
         {
             cart->Roll = -temp;
@@ -80,11 +78,10 @@ void Spline::spline(const Vertex& p0, const Vertex& p1, const Vertex& p2, const 
         }
     }
 }
-
 std::vector<Vertex> Spline::setupSpline(const char* filePath,const char* trackFilePath)
 {
     std::vector<Vertex> trackPoints;
-    std::vector<Vertex> curvePositions;
+    std::vector<Vertex> cartPositions;
     std::string line;
     std::ifstream file(filePath);
     std::string temp;
@@ -118,7 +115,7 @@ std::vector<Vertex> Spline::setupSpline(const char* filePath,const char* trackFi
                 temp = "";
             }
         }
-        curvePositions.emplace_back(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(posX,posY,posZ)),0,0,0);
+        cartPositions.emplace_back(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(posX,posY,posZ)),0,0,0);
     }
     file.close();
     file.open(trackFilePath);
@@ -156,16 +153,16 @@ std::vector<Vertex> Spline::setupSpline(const char* filePath,const char* trackFi
         trackPoints.emplace_back(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(posX,posY,posZ)),0,0,0);
     }
     file.close();
-    for(int i = 1 ; i<curvePositions.size() - 1;i++)
+    for(int i = 1 ; i<cartPositions.size() - 1;i++)
     {
-        float distance = sqrt(pow(curvePositions[i + 1].Position.x - curvePositions[i].Position.x, 2)
-                              + pow(curvePositions[i + 1].Position.y - curvePositions[i].Position.y, 2) +
-                              pow(curvePositions[i + 1].Position.z - curvePositions[i].Position.z, 2));
+        float distance = sqrt(pow(cartPositions[i + 1].Position.x - cartPositions[i].Position.x, 2)
+                              + pow(cartPositions[i + 1].Position.y - cartPositions[i].Position.y, 2) +
+                              pow(cartPositions[i + 1].Position.z - cartPositions[i].Position.z, 2));
 
-        curvePositions[i].Pitch = asin((curvePositions[i + 1].Position.y - curvePositions[i].Position.y) / distance);
-        curvePositions[i].Yaw = atan2((float) (curvePositions[i + 1].Position.z - curvePositions[i].Position.z),
-                                      (float) (curvePositions[i + 1].Position.x - curvePositions[i].Position.x));
-
+        cartPositions[i].Pitch = asin((cartPositions[i + 1].Position.y - cartPositions[i].Position.y) / distance);
+        cartPositions[i].Yaw = atan2((float) (cartPositions[i + 1].Position.z - cartPositions[i].Position.z),
+                                      (float) (cartPositions[i + 1].Position.x - cartPositions[i].Position.x));
+        /*
         glm::vec4 normal = glm::vec4(0, 1, 0, 0);
         glm::mat4 mat = glm::mat4(1);
         mat = glm::rotate(mat, -curvePositions[i].Yaw, glm::vec3(0, 1, 0));
@@ -191,7 +188,17 @@ std::vector<Vertex> Spline::setupSpline(const char* filePath,const char* trackFi
         glm::vec4 vector = glm::vec4(curvePositions[i].Position,0) - glm::vec4(trackPoints[i].Position,0);
         vector = glm::inverse(mat) * vector;
         curvePositions[i].Rotation = vector.z < 0 ? curvePositions[i].Rotation *= -1 : curvePositions[i].Rotation;
+         */
+        glm::mat4 mat = glm::mat4(1);
+        mat = glm::rotate(mat, -cartPositions[i].Yaw, glm::vec3(0, 1, 0));
+        mat = glm::rotate(mat, cartPositions[i].Pitch, glm::vec3(0, 0, 1));
+
+        glm::vec4 vertexPoint = glm::vec4(cartPositions[i].Position - trackPoints[i].Position,0);
+
+        vertexPoint = glm::inverse(mat) * vertexPoint;
+
+        cartPositions[i].Rotation = atan2(vertexPoint.z,vertexPoint.y);
     }
 
-    return curvePositions;
+    return cartPositions;
 }

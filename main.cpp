@@ -18,14 +18,14 @@ using namespace std;
 #include "Plane/Plane.h"
 #include "Spline/Spline.h"
 #include "CoasterCart/Cart.h"
+#include "Physics/PhysicsCollision.h"
+#include "Player/Player.h"
 
 
 //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 int screenWidth=800, screenHeight=800;
-
-float Angle = 0.0f;
 
 float Angle2 = 0.0f;
 
@@ -41,8 +41,6 @@ std::shared_ptr<Shader> shader;
 cubeMap map;
 
 Shader* skyBox;
-
-Camera cam(glm::vec3(0,0,-20)+    (    glm::vec3(10,10,10)*glm::vec3(-0.347193,0.10059,-0.274781)      )    );
 
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
@@ -60,10 +58,14 @@ Cube* lightCube;
 
 std::vector<Vertex> curvePositions;
 
+std::vector<Object> scene;
+Player*  player;
+
+Camera PlayerCam(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.347193,0.10059,-0.274781)));
+
+Camera cam(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.347193,0.10059,-0.274781)));
+
 int positionPointer = 0 , positionPointer1 = 12;
-
-float rollAngle = 0;
-
 
 /**************** END OPENGL FUNCTIONS *************************/
 
@@ -72,10 +74,10 @@ void reshape(GLFWwindow * window,int width, int height)		// Resize the OpenGL wi
     screenWidth = width;
     screenHeight = height;
 
-    glViewport(0,0,width,height);						// set Viewport dimensions
+    glViewport(0,0,screenWidth,screenHeight);// set Viewport dimensions
 
     //Calculate a projection matrix based on perspective viewing for 3d geometry
-    ProjectionMatrix = glm::perspective(glm::radians(cam.Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
+    ProjectionMatrix = glm::perspective(glm::radians(PlayerCam.Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
 }
 
 void display()
@@ -87,7 +89,7 @@ void display()
     Spline::spline(curvePositions[positionPointer],curvePositions[positionPointer+1],curvePositions[positionPointer+2],curvePositions[positionPointer+3],pathTime,cart);
     Spline::spline(curvePositions[positionPointer1],curvePositions[positionPointer1+1],curvePositions[positionPointer1+2],curvePositions[positionPointer1+3],pathTime,cart1);
 
-
+/*
     glm::vec4 camPos = glm::vec4(0,0.08f,0,0);
     glm::mat4 mat = glm::mat4(1);
     mat = glm::rotate(mat, -cart1->Yaw, glm::vec3(0, 1, 0));
@@ -99,35 +101,33 @@ void display()
     cam.Pitch = glm::degrees(cart1->Pitch);
     cam.Yaw = -90-glm::degrees(cart1->Yaw);
     cam.Roll = glm::degrees(cart1->Roll);
-
-
+*/
     shader->use();
 
     shader->setMat4("projection", ProjectionMatrix);
 
     shader->setVec3("lightColor", 2.0f, 2.0f, 2.0f);
     shader->setVec3("lightPos", lightPos);
-    shader->setMat4("view",cam.GetViewMatrix());
+    shader->setMat4("view",PlayerCam.GetViewMatrix());
 
     glm::mat4 model = glm::mat4(1.0f);
 
     shader->setMat4("model",model);
     plane->render();
 
-    shader->setMat4("model",cart->getModelMatrix());
-
-    cart->Draw(*shader);
-
     shader->setMat4("model",cart1->getModelMatrix());
-
     cart1->Draw(*shader);
 
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -20.0f));
-    model = glm::scale(model,glm::vec3(10,10,10));
-    shader->setMat4("model", model);
-    //Ride
+    //std::cout << glm::degrees(cart1->Roll) << std::endl;
+
+    shader->setMat4("model",cart->getModelMatrix());
+    cart->Draw(*shader);
+
+    shader->setMat4("model", obj->getTranslation());
     obj->Draw(*shader);
+
+    shader->setMat4("model",player->getModelMatrix(cam));
+    player->Draw(*shader);
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, lightPos);
@@ -138,17 +138,14 @@ void display()
     skyBox->setInt("skybox",0);
     // draw skybox as last
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-    glm::mat4 view =  glm::mat4(glm::mat3(cam.GetViewMatrix()));
+    glm::mat4 view =  glm::mat4(glm::mat3(PlayerCam.GetViewMatrix()));
     skyBox->setMat4("view", view);
     skyBox->setMat4("projection", ProjectionMatrix);
 
     //SkyBox:
     map.Render();
-
     //Update other values
     lightPos = glm::vec3(10*sin(Angle2),10,10*cos(Angle2));
-
-    Angle > 360 ? Angle = 0 : Angle += 0.1f;
 
     Angle2 > 360 ? Angle2 = 0 : Angle2 += 0.01f;
 
@@ -160,10 +157,9 @@ void display()
     }
     else
     {
-        pathTime += 0.2f*(0.5f*sin(-cart1->Pitch)+0.5f);
-        //cam.Zoom = 45-(20*(0.5f*sin(-cart1->Pitch)+0.5f));
+        pathTime += (0.1f*sin(-cart1->Pitch)+0.1f);
     }
-    rollAngle == 1 ? rollAngle =  0 : rollAngle+=0.1f;
+    std::cout << PhysicsCollision::detectCollision(*obj,scene) << std::endl;
 }
 
 void init()
@@ -176,8 +172,11 @@ void init()
     cart1 = new Cart("../Object/RollerCoaster/Cart.obj");
 
     //stbi_set_flip_vertically_on_load(false);
-
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -20.0f));
+    model = glm::scale(model,glm::vec3(10,10,10));
     obj = new Model("../Object/RollerCoaster/Rail001.obj");
+    obj->setTranslation(model);
 
     shader = std::make_shared<Shader>("../DifferentShaders/basic.vert", "../DifferentShaders/basic.frag");
 
@@ -189,6 +188,10 @@ void init()
     lightCube->constructGeometry(-1,1,-1,1,-1,1);
 
     map.innit("../skyBoxTextures/Night/");
+
+    player = new Player("../Object/RollerCoaster/Cart.obj");
+
+    scene.push_back(*player);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -202,7 +205,7 @@ void mouseMovement(GLFWwindow* window, double x, double y)
         lastY = y;
         first = false;
     }
-    cam.ProcessMouseMovement(lastX-x,lastY-y);
+    PlayerCam.ProcessMouseMovement(lastX-x,lastY-y);
     lastY = y;
     lastX = x;
 }
@@ -212,26 +215,25 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cam.ProcessKeyboard(FORWARD,deltaTime);
+        PlayerCam.ProcessKeyboard(FORWARD,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cam.ProcessKeyboard(BACKWARD,deltaTime);
+        PlayerCam.ProcessKeyboard(BACKWARD,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cam.ProcessKeyboard(LEFT,deltaTime);
+        PlayerCam.ProcessKeyboard(LEFT,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cam.ProcessKeyboard(RIGHT,deltaTime);
+        PlayerCam.ProcessKeyboard(RIGHT,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        cam.ProcessKeyboard(UP,deltaTime);
+        PlayerCam.ProcessKeyboard(UP,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        cam.ProcessKeyboard(DOWN,deltaTime);
+        PlayerCam.ProcessKeyboard(DOWN,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        std::cout << cam.Roll << std::endl;
+        std::cout << PlayerCam.Roll << std::endl;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        cam.Roll +=glm::radians(1.0f);
+        PlayerCam.Roll +=glm::radians(1.0f);
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        cam.Roll -=glm::radians(1.0f);
+        PlayerCam.Roll -=glm::radians(1.0f);
 }
 
-// FREEGLUT WINDOW SET UP
 int main(int argc, char **argv)
 {
     GLFWwindow* window;
@@ -264,7 +266,6 @@ int main(int argc, char **argv)
     glfwSwapInterval(1);
 
     init();
-
 
     while(!glfwWindowShouldClose(window))
     {

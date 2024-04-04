@@ -10,6 +10,10 @@ void Model::Draw(Shader &shader)
 {
     for(unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    boundingBox.render();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 /*
@@ -28,8 +32,12 @@ void Model::loadModel(std::string path)
         return;
     }
     directory = path.substr(0, path.find_last_of('/'));
-
+    boundingBox = Cube();
     processNode(scene->mRootNode, scene);
+
+    boundingBox.constructGeometryRef(biggestMesh->mAABB.mMin.x,biggestMesh->mAABB.mMax.x,biggestMesh->mAABB.mMin.y,biggestMesh->mAABB.mMax.y,
+                                     biggestMesh->mAABB.mMin.z,biggestMesh->mAABB.mMax.z);
+    //free(biggestMesh);
 }
 
 
@@ -102,12 +110,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         // return a mesh object created from the extracted mesh data
-        Mesh temp = Mesh(vertices, indices, textures);
-        aiAABB& boundingBox = mesh->mAABB;
-        Cube box = Cube();
-        box.constructGeometryRef(boundingBox.mMin.x,boundingBox.mMax.x,boundingBox.mMin.y,boundingBox.mMax.y,boundingBox.mMin.z,boundingBox.mMax.z);
-        temp.box = box;
-        return temp;
+        return Mesh(vertices, indices, textures);
     }
 }
 
@@ -124,6 +127,12 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+        float size = sqrt(pow(mesh->mAABB.mMax.x-mesh->mAABB.mMin.x,2)+pow(mesh->mAABB.mMax.y-mesh->mAABB.mMin.y,2)+pow(mesh->mAABB.mMax.z-mesh->mAABB.mMin.z,2));
+        if(size>meshSize)
+        {
+            meshSize = size;
+           biggestMesh = mesh;
+        }
         meshes.push_back(processMesh(mesh, scene));
     }
     // then do the same for each of its children

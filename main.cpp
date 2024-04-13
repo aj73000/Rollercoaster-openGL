@@ -20,6 +20,7 @@ using namespace std;
 #include "CoasterCart/Cart.h"
 #include "Physics/PhysicsCollision.h"
 #include "Player/Player.h"
+#include "Camera/CameraManager.h"
 
 
 //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -52,20 +53,17 @@ Cart* cart;
 Cart* cart1;
 
 double lastX,lastY;
-bool first = true;
+bool rideActive = false;
 
 Cube* lightCube;
 
 std::vector<Vertex> curvePositions;
 
-std::vector<Object> scene;
 Player*  player;
 
-Camera PlayerCam(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.347193,0.10059,-0.274781)));
+Camera cam(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.317,0.10059,-0.274781)));
 
-Camera cam(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.347193,0.10059,-0.274781)));
-
-int positionPointer = 0 , positionPointer1 = 12;
+int positionPointer = 0 , positionPointer1 = 0;
 
 /**************** END OPENGL FUNCTIONS *************************/
 
@@ -77,7 +75,7 @@ void reshape(GLFWwindow * window,int width, int height)		// Resize the OpenGL wi
     glViewport(0,0,screenWidth,screenHeight);// set Viewport dimensions
 
     //Calculate a projection matrix based on perspective viewing for 3d geometry
-    ProjectionMatrix = glm::perspective(glm::radians(PlayerCam.Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
+    ProjectionMatrix = glm::perspective(glm::radians(CameraManager::getCamera().Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
 }
 
 void display()
@@ -86,8 +84,11 @@ void display()
 
     //Update the camera position for the given point on the curve
 
-    Spline::spline(curvePositions[positionPointer],curvePositions[positionPointer+1],curvePositions[positionPointer+2],curvePositions[positionPointer+3],pathTime,cart);
-    Spline::spline(curvePositions[positionPointer1],curvePositions[positionPointer1+1],curvePositions[positionPointer1+2],curvePositions[positionPointer1+3],pathTime,cart1);
+    if(rideActive)
+    {
+        Spline::spline(curvePositions[positionPointer],curvePositions[positionPointer+1],curvePositions[positionPointer+2],curvePositions[positionPointer+3],pathTime,cart);
+        Spline::spline(curvePositions[positionPointer1],curvePositions[positionPointer1+1],curvePositions[positionPointer1+2],curvePositions[positionPointer1+3],pathTime,cart1);
+    }
 
 /*
     glm::vec4 camPos = glm::vec4(0,0.08f,0,0);
@@ -96,19 +97,20 @@ void display()
     mat = glm::rotate(mat, cart1->Pitch, glm::vec3(0, 0, 1));
     mat = glm::rotate(mat,cart1->Roll,glm::vec3(1,0,0));
     camPos = mat * camPos;
-    camPos += glm::vec4(cart1->Position,0);
-    cam.Position = camPos;
-    cam.Pitch = glm::degrees(cart1->Pitch);
-    cam.Yaw = -90-glm::degrees(cart1->Yaw);
-    cam.Roll = glm::degrees(cart1->Roll);
+    camPos += glm::vec4(cart1->getPosition(),0);
+    PlayerCam.Position = camPos;
+    PlayerCam.Pitch = glm::degrees(cart1->Pitch);
+    PlayerCam.Yaw = -90-glm::degrees(cart1->Yaw);
+    PlayerCam.Roll = glm::degrees(cart1->Roll);
 */
+
     shader->use();
 
     shader->setMat4("projection", ProjectionMatrix);
 
     shader->setVec3("lightColor", 2.0f, 2.0f, 2.0f);
     shader->setVec3("lightPos", lightPos);
-    shader->setMat4("view",PlayerCam.GetViewMatrix());
+    shader->setMat4("view",CameraManager::getCamera().GetViewMatrix());
 
     glm::mat4 model = glm::mat4(1.0f);
 
@@ -123,7 +125,7 @@ void display()
     shader->setMat4("model",cart->getModelMatrix());
     cart->Draw(*shader);
 
-    shader->setMat4("model", obj->getTranslation());
+    shader->setMat4("model", obj->getTranslationMatrix());
     obj->Draw(*shader);
 
     shader->setMat4("model",player->getModelMatrix(cam));
@@ -138,7 +140,7 @@ void display()
     skyBox->setInt("skybox",0);
     // draw skybox as last
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-    glm::mat4 view =  glm::mat4(glm::mat3(PlayerCam.GetViewMatrix()));
+    glm::mat4 view =  glm::mat4(glm::mat3(CameraManager::getCamera().GetViewMatrix()));
     skyBox->setMat4("view", view);
     skyBox->setMat4("projection", ProjectionMatrix);
 
@@ -148,18 +150,21 @@ void display()
     lightPos = glm::vec3(10*sin(Angle2),10,10*cos(Angle2));
 
     Angle2 > 360 ? Angle2 = 0 : Angle2 += 0.01f;
-
-    if(pathTime > 1)
+    if(rideActive)
     {
-        positionPointer == curvePositions.size() - 4 ? positionPointer = 0 : positionPointer += 3;
-        positionPointer1 == curvePositions.size() - 4 ? positionPointer1 = 0 :positionPointer1 += 3;
-        pathTime = 0;
+        if(pathTime > 1)
+        {
+            positionPointer == curvePositions.size() - 4 ? positionPointer = 0,rideActive = false : positionPointer += 3;
+            positionPointer1 == curvePositions.size() - 4 ? positionPointer1 = 0 :positionPointer1 += 3;
+            pathTime = 0;
+        }
+        else
+        {
+            pathTime += (0.1f*sin(-cart1->Pitch)+0.1f);
+        }
     }
-    else
-    {
-        pathTime += (0.1f*sin(-cart1->Pitch)+0.1f);
-    }
-    std::cout << PhysicsCollision::detectCollision(*obj,scene) << std::endl;
+    PhysicsCollision::update(deltaTime);
+    PhysicsCollision::detectCollision(deltaTime);
 }
 
 void init()
@@ -168,15 +173,18 @@ void init()
 
     curvePositions = Spline::setupSpline("../Spline/Points1.txt","../Spline/TrackPoints1.txt");
 
-    cart = new Cart("../Object/RollerCoaster/Cart.obj");
-    cart1 = new Cart("../Object/RollerCoaster/Cart.obj");
+    positionPointer1 = curvePositions.size() - 13;
+
+    cart = new Cart(curvePositions[positionPointer].Position,"../Object/RollerCoaster/Cart.obj");
+    cart1 = new Cart(curvePositions[positionPointer1].Position,"../Object/RollerCoaster/Cart.obj");
 
     //stbi_set_flip_vertically_on_load(false);
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -20.0f));
     model = glm::scale(model,glm::vec3(10,10,10));
     obj = new Model("../Object/RollerCoaster/Rail001.obj");
-    obj->setTranslation(model);
+    obj->setPosition(glm::vec3(0.0f, 0.0f, -20.0f));
+    obj->setTranslationMatrix(model);
 
     shader = std::make_shared<Shader>("../DifferentShaders/basic.vert", "../DifferentShaders/basic.frag");
 
@@ -189,23 +197,23 @@ void init()
 
     map.innit("../skyBoxTextures/Night/");
 
-    player = new Player("../Object/RollerCoaster/Cart.obj");
+    player = new Player("../Object/RollerCoaster/Cart.obj",cam.Position);
 
-    scene.push_back(*player);
+    PhysicsCollision::addObject(obj);
+    PhysicsCollision::addObject(player);
+    PhysicsCollision::addObject(cart);
+    PhysicsCollision::addObject(cart1);
 
+    CameraManager::setCamera(player->PlayerCam);
+    CameraManager::addCamera(player->PlayerCam);
+    CameraManager::addCamera(cam);
     glEnable(GL_DEPTH_TEST);
 
 }
 
 void mouseMovement(GLFWwindow* window, double x, double y)
 {
-    if(!first)
-    {
-        lastX = x;
-        lastY = y;
-        first = false;
-    }
-    PlayerCam.ProcessMouseMovement(lastX-x,lastY-y);
+    CameraManager::getCamera().ProcessMouseMovement(lastX-x,lastY-y);
     lastY = y;
     lastX = x;
 }
@@ -215,23 +223,21 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        PlayerCam.ProcessKeyboard(FORWARD,deltaTime);
+        CameraManager::getCamera().ProcessKeyboard(FORWARD,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        PlayerCam.ProcessKeyboard(BACKWARD,deltaTime);
+        CameraManager::getCamera().ProcessKeyboard(BACKWARD,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        PlayerCam.ProcessKeyboard(LEFT,deltaTime);
+        CameraManager::getCamera().ProcessKeyboard(LEFT,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        PlayerCam.ProcessKeyboard(RIGHT,deltaTime);
+        CameraManager::getCamera().ProcessKeyboard(RIGHT,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        PlayerCam.ProcessKeyboard(UP,deltaTime);
+        CameraManager::getCamera().ProcessKeyboard(UP,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        PlayerCam.ProcessKeyboard(DOWN,deltaTime);
+        CameraManager::getCamera().ProcessKeyboard(DOWN,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        std::cout << PlayerCam.Roll << std::endl;
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        PlayerCam.Roll +=glm::radians(1.0f);
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        PlayerCam.Roll -=glm::radians(1.0f);
+        std::cout << CameraManager::getCamera().Position.x << std::endl;
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        rideActive = true;
 }
 
 int main(int argc, char **argv)

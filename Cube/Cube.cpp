@@ -22,6 +22,7 @@ void Cube::render()
 void Cube::constructGeometryRef(float& minX, float& maxX, float& minY, float& maxY, float& minZ, float& maxZ)
 {
     maxPositions = glm::vec3(maxX,maxY,maxZ);
+    minPositions = glm::vec3(minX,minY,minZ);
 	// First simple object
 	verts[0] = minX;   verts[ 1] = minY;  verts[ 2] = minZ;
 	verts[3] = minX;   verts[ 4] =  maxY;  verts[ 5] = minZ;
@@ -75,6 +76,7 @@ void Cube::constructGeometryRef(float& minX, float& maxX, float& minY, float& ma
 void Cube::constructGeometry(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 {
     maxPositions = glm::vec3(maxX,maxY,maxZ);
+    minPositions = glm::vec3(minX,minY,minZ);
     // First simple object
     verts[0] = minX;   verts[ 1] = minY;  verts[ 2] = minZ;
     verts[3] = minX;   verts[ 4] =  maxY;  verts[ 5] = minZ;

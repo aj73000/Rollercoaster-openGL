@@ -32,6 +32,7 @@ private:
 
 public:
     glm::vec3 maxPositions;
+    glm::vec3 minPositions;
 	Cube();
     void constructGeometryRef(float& minX, float& maxX, float& minY, float& maxY, float& minZ, float& maxZ);
     void constructGeometry(float minX, float maxX, float minY, float maxY, float minZ, float maxZ);

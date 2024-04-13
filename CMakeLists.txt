@@ -30,12 +30,15 @@ add_executable(Rollercoaster-openGL main.cpp
         Audio/SoundDevice.cpp
         Audio/SoundDevice.h
         CoasterCart/Cart.h
-        Physics/PhysicsCollision.cpp
-        Physics/PhysicsCollision.h
         Player/Player.cpp
         Player/Player.h
         Physics/Object.cpp
         Physics/Object.h
+        Physics/PhysicsCollision.cpp
+        Physics/PhysicsCollision.h
+        CoasterCart/Cart.cpp
+        Camera/CameraManager.cpp
+        Camera/CameraManager.h
 )
 
 find_package(OpenGL REQUIRED)

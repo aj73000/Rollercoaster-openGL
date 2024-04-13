@@ -8,8 +8,15 @@
 #include "Object.h"
 
 class PhysicsCollision {
+    constexpr static const float m_gravity = -0.01f;
+    static std::vector<Object*> objects;
 public:
-    static bool detectCollision(Object a,const std::vector<Object>& objects);
+    static void addObject(Object* obj)
+    {
+        objects.push_back(obj);
+    };
+    static void detectCollision(float deltaTime);
+    static void update(float deltaTime);
 };
 
 

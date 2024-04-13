@@ -3,3 +3,8 @@
 //
 
 #include "Player.h"
+
+void Player::resolveCollision(float& deltaTime,Object* obj)
+{
+    std::cout << "Player Collision" << std::endl;
+}

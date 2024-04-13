@@ -9,38 +9,45 @@
 #include "../Cube/Cube.h"
 
 class Object {
+public:
+    const glm::vec3 &getPosition() const;
+
+    void setPosition(const glm::vec3 &position);
+
+    void setVelocity(const glm::vec3 &velocity);
+
+    void setForce(const glm::vec3 &force);
+
+    float getMass() const;
+
+    const glm::vec3 &getVelocity() const;
+
+    const glm::vec3 &getForce() const;
+
+    void setMass(float mass);
+
+    const Cube &getBoundingBox() const;
+
+    void setBoundingBox(const Cube &boundingBox);
+
+    const glm::mat4 &getTranslationMatrix() const;
+
+    void setTranslationMatrix(const glm::mat4 &translationMatrix);
+
+    bool collisionDetect(const glm::vec4& minPosition,const glm::vec4& maxPosition) const;
+
+    virtual void resolveCollision(float& deltaTime,Object* obj)
+    {
+        obj->setPosition(obj->getPosition() + (-obj->getVelocity()*deltaTime));
+        obj->setVelocity(glm::vec3(obj->getVelocity().x,0,obj->getVelocity().z));
+    };
+
 protected:
-    glm::vec3 Position;
-    float mass;
+    glm::vec3 Position = glm::vec3(0,0,0);
+    glm::vec3 Velocity = glm::vec3(0,0,0);
+    glm::vec3 Force = glm::vec3(0,0,0);
+    float mass = 0;
     Cube boundingBox;
     glm::mat4 translationMatrix;
-public:
-    glm::vec3 getPosition()
-    {
-        return this->Position;
-    }
-    float getMass()
-    {
-        return this->mass;
-    }
-    Cube getBoundingBox()
-    {
-        return this->boundingBox;
-    }
-    void setPosition(glm::vec3 Position)
-    {
-        this->Position = Position;
-    }
-    glm::mat4 getTranslation()
-    {
-        return this->translationMatrix;
-    }
-    void setTranslation(glm::mat4 translation)
-    {
-        this->translationMatrix = translation;
-    }
-    bool collisionDetect(glm::vec4 position);
 };
-
-
 #endif //ROLLERCOASTER_OPENGL_OBJECT_H

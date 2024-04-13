@@ -9,7 +9,10 @@
 
 class Cart : public Model{
 public:
-    Cart(const char* path) : Model(path){};
+    Cart(glm::vec3& position,const char* path) : Model(path)
+    {
+        this->setPosition(position);
+    };
     float Pitch = 0 , Yaw = 0,Roll = 0;
     glm::mat4 getModelMatrix()
     {
@@ -19,9 +22,10 @@ public:
         model = glm::rotate(model,this->Pitch,glm::vec3(0,0,1));
         model = glm::rotate(model,this->Roll,glm::vec3(1,0,0));
         model = glm::scale(model,glm::vec3(10,10,10));
-        setTranslation(model);
+        setTranslationMatrix(model);
         return model;
     };
+    void resolveCollision(float& deltaTime, Object* obj) override;
 };
 
 

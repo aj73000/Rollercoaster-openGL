@@ -4,17 +4,29 @@
 
 #include "Object.h"
 
-bool Object::collisionDetect(const glm::vec4& minPosition,const glm::vec4& maxPosition) const
+bool operator<=(const glm::vec4& pos1,const glm::vec3& pos2)
+{
+    if(pos1.x <= pos2.x)
+        if(pos1.y <= pos2.y)
+            if(pos1.z <= pos2.z)
+                return true;
+    return false;
+}
+bool operator>=(const glm::vec4& pos1,const glm::vec3& pos2)
+{
+    if(pos1.x >= pos2.x)
+        if(pos1.y >= pos2.y)
+            if(pos1.z >= pos2.z)
+                return true;
+    return false;
+}
+
+bool Object::collisionDetect(const glm::vec4& position) const
 {
     //Detect for collision
-    if( boundingBox.minPositions.x <= maxPosition.x &&
-        boundingBox.maxPositions.x >= minPosition.x &&
-        boundingBox.minPositions.y <= maxPosition.y &&
-        boundingBox.maxPositions.y >= minPosition.y &&
-        boundingBox.minPositions.z <= maxPosition.z &&
-        boundingBox.maxPositions.z >= minPosition.z)
-        return true;
-
+    if(position <= vertexes[1])
+        if(position >= vertexes[0])
+            return true;
     return false;
 }
 
@@ -59,9 +71,14 @@ void Object::setBoundingBox(const Cube &boundingBox) {
 }
 
 const glm::mat4 &Object::getTranslationMatrix() const {
-    return translationMatrix;
+    return this->translationMatrix;
 }
 
-void Object::setTranslationMatrix(const glm::mat4 &translationMatrix) {
-    Object::translationMatrix = translationMatrix;
+void Object::setTranslationMatrix(const glm::mat4 &translationMatrix)
+{
+    this->translationMatrix = translationMatrix;
+}
+
+const std::vector<glm::vec3> &Object::getVertexes() const {
+    return vertexes;
 }

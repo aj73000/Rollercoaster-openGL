@@ -34,7 +34,7 @@ public:
 
     void setTranslationMatrix(const glm::mat4 &translationMatrix);
 
-    bool collisionDetect(const glm::vec4& minPosition,const glm::vec4& maxPosition) const;
+    bool collisionDetect(const glm::vec4& position) const;
 
     virtual void resolveCollision(float& deltaTime,Object* obj)
     {
@@ -46,7 +46,11 @@ protected:
     glm::vec3 Position = glm::vec3(0,0,0);
     glm::vec3 Velocity = glm::vec3(0,0,0);
     glm::vec3 Force = glm::vec3(0,0,0);
+    std::vector<glm::vec3> vertexes;
     float mass = 0;
+public:
+    const std::vector<glm::vec3> &getVertexes() const;
+protected:
     Cube boundingBox;
     glm::mat4 translationMatrix;
 };

@@ -204,7 +204,7 @@ void init()
     PhysicsCollision::addObject(cart);
     PhysicsCollision::addObject(cart1);
 
-    CameraManager::setCamera(player->PlayerCam);
+    CameraManager::setCamera(cam);
     CameraManager::addCamera(player->PlayerCam);
     CameraManager::addCamera(cam);
     glEnable(GL_DEPTH_TEST);
@@ -234,10 +234,10 @@ void processInput(GLFWwindow *window)
         CameraManager::getCamera().ProcessKeyboard(UP,deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         CameraManager::getCamera().ProcessKeyboard(DOWN,deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        std::cout << CameraManager::getCamera().Position.x << std::endl;
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
         rideActive = true;
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+        CameraManager::setCamera(player->PlayerCam);
 }
 
 int main(int argc, char **argv)

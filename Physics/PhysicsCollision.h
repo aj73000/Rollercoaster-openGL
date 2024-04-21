@@ -9,6 +9,7 @@
 
 class PhysicsCollision {
     constexpr static const float m_gravity = -0.01f;
+    constexpr static const float frictionConstant = 0.97f;
     static std::vector<Object*> objects;
 public:
     static void addObject(Object* obj)

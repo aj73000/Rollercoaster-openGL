@@ -4,19 +4,23 @@
 
 #include "CameraManager.h"
 
-std::vector<Camera> CameraManager::cams;
 Camera* CameraManager::cam = new Camera();
+bool CameraManager::inCart = false;
 
 void CameraManager::setCamera(Camera &camera)
 {
     cam = &camera;
 }
 
-Camera& CameraManager::getCamera() {
+Camera& CameraManager::getCamera()
+{
     return *cam;
 }
 
-void CameraManager::addCamera(Camera &camera)
-{
-    cams.push_back(camera);
+bool CameraManager::isInCart() {
+    return inCart;
+}
+
+void CameraManager::setInCart(bool inCart) {
+    CameraManager::inCart = inCart;
 }

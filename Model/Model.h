@@ -28,8 +28,10 @@ public:
     {
         loadModel(path);
     }
-
-
+    ~Model()
+    {
+        free(biggestMesh);
+    }
     void Draw(Shader &shader);
 
 private:

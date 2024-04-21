@@ -25,7 +25,6 @@ using namespace std;
 
 //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-
 int screenWidth=800, screenHeight=800;
 
 float Angle2 = 0.0f;
@@ -61,7 +60,7 @@ std::vector<Vertex> curvePositions;
 
 Player*  player;
 
-Camera cam(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.317,0.10059,-0.274781)));
+Camera worldCam(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.347193,0.10059,-0.274781)));
 
 int positionPointer = 0 , positionPointer1 = 0;
 
@@ -90,20 +89,8 @@ void display()
         Spline::spline(curvePositions[positionPointer1],curvePositions[positionPointer1+1],curvePositions[positionPointer1+2],curvePositions[positionPointer1+3],pathTime,cart1);
     }
 
-/*
-    glm::vec4 camPos = glm::vec4(0,0.08f,0,0);
-    glm::mat4 mat = glm::mat4(1);
-    mat = glm::rotate(mat, -cart1->Yaw, glm::vec3(0, 1, 0));
-    mat = glm::rotate(mat, cart1->Pitch, glm::vec3(0, 0, 1));
-    mat = glm::rotate(mat,cart1->Roll,glm::vec3(1,0,0));
-    camPos = mat * camPos;
-    camPos += glm::vec4(cart1->getPosition(),0);
-    PlayerCam.Position = camPos;
-    PlayerCam.Pitch = glm::degrees(cart1->Pitch);
-    PlayerCam.Yaw = -90-glm::degrees(cart1->Yaw);
-    PlayerCam.Roll = glm::degrees(cart1->Roll);
-*/
-
+    cart1->update();
+    cart->update();
     shader->use();
 
     shader->setMat4("projection", ProjectionMatrix);
@@ -120,15 +107,13 @@ void display()
     shader->setMat4("model",cart1->getModelMatrix());
     cart1->Draw(*shader);
 
-    //std::cout << glm::degrees(cart1->Roll) << std::endl;
-
     shader->setMat4("model",cart->getModelMatrix());
     cart->Draw(*shader);
 
     shader->setMat4("model", obj->getTranslationMatrix());
     obj->Draw(*shader);
 
-    shader->setMat4("model",player->getModelMatrix(cam));
+    shader->setMat4("model",player->getModelMatrix());
     player->Draw(*shader);
 
     model = glm::mat4(1.0f);
@@ -197,18 +182,16 @@ void init()
 
     map.innit("../skyBoxTextures/Night/");
 
-    player = new Player("../Object/RollerCoaster/Cart.obj",cam.Position);
+    player = new Player("../Object/RollerCoaster/Cart.obj",(glm::vec3(0,0,-20)+(glm::vec3(10,10,10)*glm::vec3(-0.317193,0.10059,-0.308781))));
 
     PhysicsCollision::addObject(obj);
     PhysicsCollision::addObject(player);
     PhysicsCollision::addObject(cart);
     PhysicsCollision::addObject(cart1);
 
-    CameraManager::setCamera(cam);
-    CameraManager::addCamera(player->PlayerCam);
-    CameraManager::addCamera(cam);
-    glEnable(GL_DEPTH_TEST);
+    CameraManager::setCamera(player->PlayerCam);
 
+    glEnable(GL_DEPTH_TEST);
 }
 
 void mouseMovement(GLFWwindow* window, double x, double y)
@@ -222,22 +205,47 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        CameraManager::getCamera().ProcessKeyboard(FORWARD,deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        CameraManager::getCamera().ProcessKeyboard(BACKWARD,deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        CameraManager::getCamera().ProcessKeyboard(LEFT,deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        CameraManager::getCamera().ProcessKeyboard(RIGHT,deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        CameraManager::getCamera().ProcessKeyboard(UP,deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        CameraManager::getCamera().ProcessKeyboard(DOWN,deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-        rideActive = true;
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        CameraManager::setCamera(player->PlayerCam);
+
+    if(glfwGetKey(window,GLFW_KEY_E) == GLFW_PRESS)
+    {
+        if(CameraManager::isInCart() && !rideActive)
+        {
+            CameraManager::setCamera(player->PlayerCam);
+            CameraManager::setInCart(false);
+        }
+    }
+    if(&CameraManager::getCamera() == &player->PlayerCam)
+    {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            player->ProcessKeyboard(FORWARD);
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            player->ProcessKeyboard(BACKWARD);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            player->ProcessKeyboard(LEFT);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            player->ProcessKeyboard(RIGHT);
+        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+            rideActive = true;
+    }
+    else
+    {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            CameraManager::getCamera().ProcessKeyboard(FORWARD,deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            CameraManager::getCamera().ProcessKeyboard(BACKWARD,deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            CameraManager::getCamera().ProcessKeyboard(LEFT,deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            CameraManager::getCamera().ProcessKeyboard(RIGHT,deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            CameraManager::getCamera().ProcessKeyboard(UP,deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            CameraManager::getCamera().ProcessKeyboard(DOWN,deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+            rideActive = true;
+        if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+            CameraManager::setCamera(player->PlayerCam);
+    }
 }
 
 int main(int argc, char **argv)
@@ -289,7 +297,13 @@ int main(int argc, char **argv)
 
         glfwPollEvents();
     }
-
     glfwTerminate();
+
+    free(player);
+    free(skyBox);
+    free(plane);
+    free(cart);
+    free(obj);
+    free(cart1);
     return 0;
 }

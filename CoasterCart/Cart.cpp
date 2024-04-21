@@ -5,5 +5,6 @@
 
 void Cart::resolveCollision(float& deltaTime, Object *obj)
 {
-    Object::resolveCollision(deltaTime,obj);
+    CameraManager::setCamera(this->cam);
+    CameraManager::setInCart(true);
 }

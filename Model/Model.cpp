@@ -40,7 +40,6 @@ void Model::loadModel(std::string path)
 
     vertexes.emplace_back(biggestMesh->mAABB.mMin.x,biggestMesh->mAABB.mMin.y,biggestMesh->mAABB.mMin.z);
     vertexes.emplace_back(biggestMesh->mAABB.mMax.x,biggestMesh->mAABB.mMax.y,biggestMesh->mAABB.mMax.z);
-
     vertexes.emplace_back(biggestMesh->mAABB.mMin.x,biggestMesh->mAABB.mMax.y,biggestMesh->mAABB.mMin.z);
     vertexes.emplace_back(biggestMesh->mAABB.mMax.x,biggestMesh->mAABB.mMin.y,biggestMesh->mAABB.mMin.z);
     vertexes.emplace_back(biggestMesh->mAABB.mMax.x,biggestMesh->mAABB.mMax.y,biggestMesh->mAABB.mMin.z);

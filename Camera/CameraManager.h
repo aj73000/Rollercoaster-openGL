@@ -10,11 +10,15 @@
 
 class CameraManager{
 private:
-    static Camera* cam;
-    static std::vector<Camera> cams;
-
 public:
-    static void addCamera(Camera& camera);
+    static bool isInCart();
+
+    static void setInCart(bool inCart);
+
+private:
+    static Camera* cam;
+    static bool inCart;
+public:
     static void setCamera(Camera& camera);
     static Camera& getCamera();
 

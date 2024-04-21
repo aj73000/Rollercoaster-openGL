@@ -6,12 +6,15 @@
 #define LEARNOPENGL_CART_H
 
 #include "../Model/Model.h"
+#include "../Camera/CameraManager.h"
 
 class Cart : public Model{
 public:
+    Camera cam;
     Cart(glm::vec3& position,const char* path) : Model(path)
     {
         this->setPosition(position);
+        cam ={this->Position};
     };
     float Pitch = 0 , Yaw = 0,Roll = 0;
     glm::mat4 getModelMatrix()
@@ -25,6 +28,20 @@ public:
         setTranslationMatrix(model);
         return model;
     };
+    void update()
+    {
+        glm::vec4 camPos = glm::vec4(0,0.08f,0,0);
+        glm::mat4 mat = glm::mat4(1);
+        mat = glm::rotate(mat, -this->Yaw, glm::vec3(0, 1, 0));
+        mat = glm::rotate(mat, this->Pitch, glm::vec3(0, 0, 1));
+        mat = glm::rotate(mat,this->Roll,glm::vec3(1,0,0));
+        camPos = mat * camPos;
+        camPos += glm::vec4(this->getPosition(),0);
+        cam.Position = camPos;
+        cam.Pitch = glm::degrees(this->Pitch);
+        cam.Yaw = -90-glm::degrees(this->Yaw);
+        cam.Roll = glm::degrees(this->Roll);
+    }
     void resolveCollision(float& deltaTime, Object* obj) override;
 };
 

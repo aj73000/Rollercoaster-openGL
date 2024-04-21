@@ -39,6 +39,8 @@ add_executable(Rollercoaster-openGL main.cpp
         CoasterCart/Cart.cpp
         Camera/CameraManager.cpp
         Camera/CameraManager.h
+        Shadows/DepthMap.cpp
+        Shadows/DepthMap.h
 )
 
 find_package(OpenGL REQUIRED)

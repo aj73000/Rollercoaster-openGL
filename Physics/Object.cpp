@@ -21,9 +21,8 @@ bool operator>=(const glm::vec4& pos1,const glm::vec3& pos2)
     return false;
 }
 
-bool Object::collisionDetect(const glm::vec4& position) const
+bool Object::collisionDetect(const glm::vec4& position,const Object& obj) const
 {
-    //Detect for collision
     if(position <= vertexes[1])
         if(position >= vertexes[0])
             return true;
@@ -81,4 +80,12 @@ void Object::setTranslationMatrix(const glm::mat4 &translationMatrix)
 
 const std::vector<glm::vec3> &Object::getVertexes() const {
     return vertexes;
+}
+
+bool Object::getisGrounded() const {
+    return isGrounded;
+}
+
+void Object::setIsGrounded(bool isGrounded) {
+    Object::isGrounded = isGrounded;
 }

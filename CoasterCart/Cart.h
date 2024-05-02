@@ -30,7 +30,7 @@ public:
     };
     void update()
     {
-        glm::vec4 camPos = glm::vec4(0,0.08f,0,0);
+        glm::vec4 camPos = glm::vec4(0,0.093f,0,0);
         glm::mat4 mat = glm::mat4(1);
         mat = glm::rotate(mat, -this->Yaw, glm::vec3(0, 1, 0));
         mat = glm::rotate(mat, this->Pitch, glm::vec3(0, 0, 1));

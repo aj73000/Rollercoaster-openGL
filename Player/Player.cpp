@@ -6,7 +6,7 @@
 
 void Player::resolveCollision(float& deltaTime,Object* obj)
 {
-    std::cout << "Player Collision" << std::endl;
+    //std::cout << "Player Collision" << std::endl;
 }
 
 void Player::ProcessKeyboard(Camera_Movement direction)

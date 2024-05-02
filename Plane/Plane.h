@@ -7,16 +7,19 @@
 
 #include "GL/glew.h"
 #include "../shaders/Shader.h"
+#include "../Physics/Object.h"
 
 
-class Plane {
-
+class Plane{
     unsigned int planeVAO;
-
-    // plane VAO
     unsigned int planeVBO;
+    static constexpr unsigned int NUM_PATCH_PTS = 4;
+    unsigned int grass_texture,rock_texture,sand_texture;
+
+    static constexpr unsigned int rez = 10;
+    int width = 2400, height = 1000;
 public:
-    Plane();
+    Plane(Shader* shader);
     void render();
 
 };

@@ -4,31 +4,6 @@
 
 #include "Object.h"
 
-bool operator<=(const glm::vec4& pos1,const glm::vec3& pos2)
-{
-    if(pos1.x <= pos2.x)
-        if(pos1.y <= pos2.y)
-            if(pos1.z <= pos2.z)
-                return true;
-    return false;
-}
-bool operator>=(const glm::vec4& pos1,const glm::vec3& pos2)
-{
-    if(pos1.x >= pos2.x)
-        if(pos1.y >= pos2.y)
-            if(pos1.z >= pos2.z)
-                return true;
-    return false;
-}
-
-bool Object::collisionDetect(const glm::vec4& position,const Object& obj) const
-{
-    if(position <= vertexes[1])
-        if(position >= vertexes[0])
-            return true;
-    return false;
-}
-
 const glm::vec3 &Object::getVelocity() const {
     return Velocity;
 }
@@ -63,10 +38,6 @@ void Object::setMass(float mass) {
 
 const Cube &Object::getBoundingBox() const {
     return boundingBox;
-}
-
-void Object::setBoundingBox(const Cube &boundingBox) {
-    Object::boundingBox = boundingBox;
 }
 
 const glm::mat4 &Object::getTranslationMatrix() const {

@@ -14,7 +14,7 @@ public:
     unsigned int ID;
 
     // constructor reads and builds the shader
-    Shader(const char* vertexPath, const char* fragmentPath);
+    Shader(const char* vertexPath, const char* fragmentPath,const char* tessellationControlPath,const char* tessellationEvaluationPath,const char* geometryPath);
     // use/activate the shader
 
     void use() const
@@ -78,6 +78,6 @@ public:
     }
 
 private:
-    void checkCompileErrors(unsigned int shader, std::string type);
+    void checkCompileErrors(unsigned int shader, const std::string& type);
 
 };

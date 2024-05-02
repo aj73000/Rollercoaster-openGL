@@ -42,6 +42,8 @@ cubeMap map;
 
 Shader* skyBox;
 
+Shader* heightMapShader;
+
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 Plane* plane;
@@ -72,9 +74,8 @@ void reshape(GLFWwindow * window,int width, int height)		// Resize the OpenGL wi
     screenHeight = height;
 
     glViewport(0,0,screenWidth,screenHeight);// set Viewport dimensions
-
     //Calculate a projection matrix based on perspective viewing for 3d geometry
-    ProjectionMatrix = glm::perspective(glm::radians(CameraManager::getCamera().Zoom), width / static_cast<float>(height), 0.1f, 200.0f);
+    ProjectionMatrix = glm::perspective(glm::radians(CameraManager::getCamera().Zoom), (float)width / static_cast<float>(height), 0.1f, 200.0f);
 }
 
 void display()
@@ -91,18 +92,18 @@ void display()
 
     cart1->update();
     cart->update();
+
+    glm::mat4 model = glm::mat4(1.0f);
+
     shader->use();
 
     shader->setMat4("projection", ProjectionMatrix);
 
+    //Lighting add cone/directional lights here
     shader->setVec3("lightColor", 2.0f, 2.0f, 2.0f);
     shader->setVec3("lightPos", lightPos);
+
     shader->setMat4("view",CameraManager::getCamera().GetViewMatrix());
-
-    glm::mat4 model = glm::mat4(1.0f);
-
-    shader->setMat4("model",model);
-    plane->render();
 
     shader->setMat4("model",cart1->getModelMatrix());
     cart1->Draw(*shader);
@@ -132,6 +133,15 @@ void display()
     //SkyBox:
     map.Render();
     //Update other values
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model,glm::vec3(0,10,0));
+    heightMapShader->use();
+    heightMapShader->setMat4("projection", ProjectionMatrix);
+    heightMapShader->setMat4("view",CameraManager::getCamera().GetViewMatrix());
+    heightMapShader->setMat4("model",model);
+    plane->render();
+
     lightPos = glm::vec3(10*sin(Angle2),10,10*cos(Angle2));
 
     Angle2 > 360 ? Angle2 = 0 : Angle2 += 0.01f;
@@ -150,6 +160,7 @@ void display()
     }
     PhysicsCollision::update(deltaTime);
     PhysicsCollision::detectCollision(deltaTime);
+
 }
 
 void init()
@@ -171,11 +182,16 @@ void init()
     obj->setPosition(glm::vec3(0.0f, 0.0f, -20.0f));
     obj->setTranslationMatrix(model);
 
-    shader = std::make_shared<Shader>("../DifferentShaders/basic.vert", "../DifferentShaders/basic.frag");
+    shader = std::make_shared<Shader>("../DifferentShaders/basic.vert", "../DifferentShaders/basic.frag",nullptr,
+                                      nullptr, nullptr);
 
-    skyBox = new Shader("../DifferentShaders/skyBox.vert","../DifferentShaders/skyBox.frag");
 
-    plane = new Plane();
+    heightMapShader = new Shader("../DifferentShaders/heightShader.vert","../DifferentShaders/heightShader.frag","../DifferentShaders/heightShader.tesc",
+                                 "../DifferentShaders/heightShader.tese",nullptr);
+
+    skyBox = new Shader("../DifferentShaders/skyBox.vert","../DifferentShaders/skyBox.frag",nullptr,nullptr,nullptr);
+
+    plane = new Plane(heightMapShader);
 
     lightCube = new Cube();
     lightCube->constructGeometry(-1,1,-1,1,-1,1);
@@ -189,7 +205,7 @@ void init()
     PhysicsCollision::addObject(cart);
     PhysicsCollision::addObject(cart1);
 
-    CameraManager::setCamera(player->PlayerCam);
+    CameraManager::setCamera(worldCam);
 
     glEnable(GL_DEPTH_TEST);
 }
@@ -250,6 +266,7 @@ void processInput(GLFWwindow *window)
 
 int main(int argc, char **argv)
 {
+
     GLFWwindow* window;
 
     if(!glfwInit())
@@ -279,6 +296,8 @@ int main(int argc, char **argv)
     glfwSetCursorPosCallback(window, mouseMovement);
     glfwSwapInterval(1);
 
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
     init();
 
     while(!glfwWindowShouldClose(window))

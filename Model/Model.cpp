@@ -8,8 +8,8 @@ unsigned int TextureFromFile(const char *path, const std::string &directory, boo
 
 void Model::Draw(Shader &shader)
 {
-    for(unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].Draw(shader);
+    for(auto & meshe : meshes)
+        meshe.Draw(shader);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     boundingBox.render();
@@ -118,7 +118,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         // return a mesh object created from the extracted mesh data
-        return Mesh(vertices, indices, textures);
+        return {vertices, indices, textures};
     }
 }
 

@@ -28,13 +28,9 @@ public:
 
     [[nodiscard]] const Cube &getBoundingBox() const;
 
-    void setBoundingBox(const Cube &boundingBox);
-
     [[nodiscard]] const glm::mat4 &getTranslationMatrix() const;
 
     void setTranslationMatrix(const glm::mat4 &translationMatrix);
-
-    [[nodiscard]] bool collisionDetect(const glm::vec4& position,const Object& obj) const;
 
     virtual void resolveCollision(float& deltaTime,Object* obj)
     {

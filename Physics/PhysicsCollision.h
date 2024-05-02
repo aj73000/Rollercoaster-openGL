@@ -11,6 +11,9 @@ class PhysicsCollision {
     constexpr static const float m_gravity = -0.01f;
     constexpr static const float frictionConstant = 0.97f;
     static std::vector<Object*> objects;
+    static void sort(std::vector<glm::vec3>& points,const char* sortIndex);
+    static bool isOverlap(std::vector<glm::vec3>& points,Object* a);
+    static bool specifiedCheck(std::vector<glm::vec3>&positions,Object* ob);
 public:
     static void addObject(Object* obj)
     {

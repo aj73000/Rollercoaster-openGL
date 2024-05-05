@@ -14,21 +14,16 @@ out vec4 FragColor;
 
 void main()
 {
-    float h = 1-(Height)/55;
-    //FragColor = vec4(0, h, 0, 1.0)
-
-    //FragColor = vec4(colour,0);
-
+    float h = 1-(Height)/35;
 
     float min_rock_slope = 0.5f;
-    float max_grass_slope = 0.9f;
-    float min_rockgrass_height = 2.0f;
-    float max_sand_height = 1.0f;
+    float max_grass_slope = 0.8f;
+    float min_rockgrass_height = 0.4f;
+    float max_sand_height = 0.5;
 
-    float rock_grass_weight = 1-h;
+    float rock_grass_weight = h;
 
-
-    float sand_rockgrass_weight = 1/rock_grass_weight;
+    float sand_rockgrass_weight = rock_grass_weight;
 
     rock_grass_weight = max(min_rock_slope,rock_grass_weight);
     rock_grass_weight = min(max_grass_slope,rock_grass_weight);
@@ -42,8 +37,9 @@ void main()
     sand_rockgrass_weight /= max_sand_height - min_rockgrass_height;
 
 
-    vec4 temp =  mix(texture(rock_texture,TextureCoords*200),texture(grass_texture,TextureCoords*200),rock_grass_weight);
+    vec4 temp =  mix(texture(grass_texture,TextureCoords*2000),texture(rock_texture,TextureCoords*2000),rock_grass_weight);
 
-    FragColor = mix(texture(sand_texture,TextureCoords*200),temp,sand_rockgrass_weight);
+    temp =  mix(texture(sand_texture,TextureCoords*2000),temp,sand_rockgrass_weight*0.8);
 
+    FragColor = mix(vec4(0,0.3f,0.5f,1.0),temp,sand_rockgrass_weight);
 }

@@ -34,8 +34,6 @@ void main()
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
 
-
-
     vec2 t00 = TextureCoord[0];
     vec2 t01 = TextureCoord[1];
     vec2 t10 = TextureCoord[2];
@@ -47,7 +45,7 @@ void main()
 
     TextureCoords = texCoord;
 
-    Height = 120*noise(texCoord*50);
+    Height = 35*random(vec2(10,10))*noise(texCoord*50);
 
     vec4 p00 = gl_in[0].gl_Position;
     vec4 p01 = gl_in[1].gl_Position;

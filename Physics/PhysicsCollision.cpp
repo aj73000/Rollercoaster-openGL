@@ -12,7 +12,6 @@ bool operator>(const glm::vec4& pos1,const glm::vec4& pos2)
     float sum2 = pos2.x+pos2.y+pos2.z;
     return sum1>sum2;
 }
-//glm::vec4 boxMaxPosition = glm::inverse(a->getTranslationMatrix())*(glm::vec4(b->getPosition()+b->getBoundingBox().maxPositions,0)-glm::vec4(a->getPosition(),0));
 void PhysicsCollision::detectCollision(float deltaTime)
 {
     for(Object* d : objects)

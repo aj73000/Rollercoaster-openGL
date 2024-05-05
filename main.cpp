@@ -75,7 +75,7 @@ void reshape(GLFWwindow * window,int width, int height)		// Resize the OpenGL wi
 
     glViewport(0,0,screenWidth,screenHeight);// set Viewport dimensions
     //Calculate a projection matrix based on perspective viewing for 3d geometry
-    ProjectionMatrix = glm::perspective(glm::radians(CameraManager::getCamera().Zoom), (float)width / static_cast<float>(height), 0.1f, 200.0f);
+    ProjectionMatrix = glm::perspective(glm::radians(CameraManager::getCamera().Zoom), (float)width / static_cast<float>(height), 0.1f, 800.0f);
 }
 
 void display()
@@ -135,7 +135,7 @@ void display()
     //Update other values
 
     model = glm::mat4(1.0f);
-    model = glm::translate(model,glm::vec3(0,10,0));
+    model = glm::translate(model,glm::vec3(0,0,-20));
     heightMapShader->use();
     heightMapShader->setMat4("projection", ProjectionMatrix);
     heightMapShader->setMat4("view",CameraManager::getCamera().GetViewMatrix());

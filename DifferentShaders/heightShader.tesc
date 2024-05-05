@@ -18,8 +18,8 @@ void main()
         const int MIN_TESS_LEVEL = 4;
         const int MAX_TESS_LEVEL = 64;
 
-        const float MIN_DISTANCE = 300;
-        const float MAX_DISTANCE = 301;
+        const float MIN_DISTANCE = 900;
+        const float MAX_DISTANCE = 901;
 
         vec4 eyeSpacePos00 = view * model * gl_in[0].gl_Position;
         vec4 eyeSpacePos01 = view * model * gl_in[1].gl_Position;

@@ -162,6 +162,9 @@ std::vector<Vertex> Spline::setupSpline(const char* filePath,const char* trackFi
         cartPositions[i].Pitch = asin((cartPositions[i + 1].Position.y - cartPositions[i].Position.y) / distance);
         cartPositions[i].Yaw = atan2((float) (cartPositions[i + 1].Position.z - cartPositions[i].Position.z),
                                       (float) (cartPositions[i + 1].Position.x - cartPositions[i].Position.x));
+
+        //Cosine rule method. Switched to using a reference to the cart points to work out the roll angle.
+        //Cosine rule method only gave a magnitude.
         /*
         glm::vec4 normal = glm::vec4(0, 1, 0, 0);
         glm::mat4 mat = glm::mat4(1);
@@ -189,6 +192,8 @@ std::vector<Vertex> Spline::setupSpline(const char* filePath,const char* trackFi
         vector = glm::inverse(mat) * vector;
         curvePositions[i].Rotation = vector.z < 0 ? curvePositions[i].Rotation *= -1 : curvePositions[i].Rotation;
          */
+
+        //New method using the reference method
         glm::mat4 mat = glm::mat4(1);
         mat = glm::rotate(mat, -cartPositions[i].Yaw, glm::vec3(0, 1, 0));
         mat = glm::rotate(mat, cartPositions[i].Pitch, glm::vec3(0, 0, 1));

@@ -12,7 +12,7 @@ void Model::Draw(Shader &shader)
         meshe.Draw(shader);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    boundingBox.render();
+    //boundingBox.render();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 

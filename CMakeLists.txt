@@ -21,8 +21,6 @@ add_executable(Rollercoaster-openGL main.cpp
         Cube/Cube.cpp
         CubeMap/cubeMap.cpp
         CubeMap/cubeMap.h
-        shaders/DepthMap.cpp
-        shaders/DepthMap.h
         Plane/Plane.cpp
         Plane/Plane.h
         Spline/Spline.cpp
@@ -41,6 +39,8 @@ add_executable(Rollercoaster-openGL main.cpp
         Camera/CameraManager.h
         Shadows/DepthMap.cpp
         Shadows/DepthMap.h
+        Physics/boundaries.cpp
+        Physics/boundaries.h
 )
 
 find_package(OpenGL REQUIRED)

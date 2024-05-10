@@ -38,8 +38,10 @@ public:
         camPos = mat * camPos;
         camPos += glm::vec4(this->getPosition(),0);
         cam.Position = camPos;
+
         cam.Pitch = glm::degrees(this->Pitch);
         cam.Yaw = -90-glm::degrees(this->Yaw);
+
         cam.Roll = glm::degrees(this->Roll);
     }
     void resolveCollision(float& deltaTime, Object* obj) override;

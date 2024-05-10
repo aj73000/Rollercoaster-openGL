@@ -16,7 +16,7 @@ class Plane{
     static constexpr unsigned int NUM_PATCH_PTS = 4;
     unsigned int grass_texture,rock_texture,sand_texture;
 
-    static constexpr unsigned int rez = 10;
+    static constexpr unsigned int rez = 8;
     int width = 2400, height = 1000;
 public:
     Plane(Shader* shader);

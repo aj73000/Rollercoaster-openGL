@@ -5,7 +5,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath,
                const char* tessellationEvaluationPath,
                const char* geometryPath)
 {
-    unsigned int vertex, fragment,tessellationControl,tessellationEvaluation;
+    unsigned int vertex, fragment,tessellationControl,tessellationEvaluation,geometry;
     // shader Program
     ID = glCreateProgram();
     // vertex shader
@@ -107,6 +107,29 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath,
         checkCompileErrors(fragment, "FRAGMENT");
         glAttachShader(ID, fragment);
     }
+    if(geometryPath != nullptr){
+        std::string geometryCode;
+        std::ifstream geometryShaderFile;
+        geometryShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+        try
+        {
+            geometryShaderFile.open(geometryPath);
+            std::stringstream geometryShaderStream;
+            geometryShaderStream << geometryShaderFile.rdbuf();
+            geometryShaderFile.close();
+            geometryCode = geometryShaderStream.str();
+        }
+        catch (std::ifstream::failure& e)
+        {
+            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+        }
+        const char* geometryShaderCode = geometryCode.c_str();
+        geometry = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometry, 1, &geometryShaderCode, nullptr);
+        glCompileShader(geometry);
+        checkCompileErrors(geometry, "Geometry");
+        glAttachShader(ID, geometry);
+    }
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
     // delete the shaders as they're linked into our program now and no longer necessary
@@ -114,6 +137,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath,
     glDeleteShader(fragment);
     glDeleteShader(tessellationControl);
     glDeleteShader(tessellationEvaluation);
+    glDeleteShader(geometry);
 }
 
 void Shader::checkCompileErrors(unsigned int shader, const std::string& type)
